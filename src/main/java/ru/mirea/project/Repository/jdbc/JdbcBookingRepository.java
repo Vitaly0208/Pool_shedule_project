@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -153,6 +154,90 @@ public class JdbcBookingRepository implements BookingRepository {
         } catch (SQLException e) {
             throw new DatabaseException("Ошибка при удалении бронирования с ID: " + id, e);
         }
+    }
+
+    @Override
+    public List<Booking> findByUserId(Long userId){
+        String sql = "SELECT id, user_id, session_type, start_time, duration_minutes, lane_number, booking_status " +
+                "FROM bookings WHERE user_id = ?";
+
+        List<Booking> bookings = new ArrayList<>();
+
+        try (
+                Connection connection = databaseManager.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+                ) {
+            statement.setLong(1,userId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    bookings.add(mapRowToBooking(resultSet));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Ошибка при поиске бронирований пользователя с ID: " + userId, e);
+        }
+        return bookings;
+    }
+
+    @Override
+    public List<Booking> findByDateRange(LocalDate startDate, LocalDate endDate){
+        String sql = "SELECT id, user_id, session_type, start_time, duration_minutes, lane_number, booking_status " +
+                "FROM bookings WHERE start_time < ? " +
+                "  AND (start_time + (duration_minutes || ' minutes')::INTERVAL) > ?";
+        List<Booking> bookings = new ArrayList<>();
+
+        try (
+                Connection connection = databaseManager.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+                ) {
+
+            LocalDateTime startDateTime = startDate.atStartOfDay();
+            LocalDateTime endDateTime = endDate.plusDays(1).atStartOfDay();
+            statement.setObject(1, endDateTime);
+            statement.setObject(2, startDateTime);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    bookings.add(mapRowToBooking(resultSet));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Ошибка при поиске списка букингов по времени", e);
+        }
+        return bookings;
+    }
+
+    @Override
+    public Optional<Booking> findByLaneAndTime(Integer laneNumber, LocalDateTime startTime, LocalDateTime endTime) {
+        String sql = "SELECT id, user_id, session_type, start_time, duration_minutes, lane_number, booking_status " +
+                "FROM bookings " +
+                "WHERE lane_number = ? " +
+                "  AND start_time < ? " +
+                "  AND (start_time + (duration_minutes || ' minutes')::INTERVAL) > ? " +
+                "LIMIT 1";
+
+        try (
+                Connection connection = databaseManager.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            statement.setObject(1, laneNumber);
+            statement.setObject(2, endTime);
+            statement.setObject(3, startTime);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return Optional.of(mapRowToBooking(resultSet));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Ошибка при проверке занятости дорожки " + laneNumber, e);
+        }
+
+        return Optional.empty();
     }
 
 

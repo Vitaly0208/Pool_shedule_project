@@ -17,8 +17,8 @@ public interface BookingRepository {
     void update(Booking booking);
     void delete(Long id);
 
-//    List<Booking> findByUserId(Long userId);
-//    List<Booking> findByDateRange(LocalDate startDate, LocalDate endDate);
-//    Optional<Booking> findByLaneAndTime(Integer laneNumber, LocalDateTime startTime);
+    List<Booking> findByUserId(Long userId);
+    List<Booking> findByDateRange(LocalDate startDate, LocalDate endDate);
+    Optional<Booking> findByLaneAndTime(Integer laneNumber, LocalDateTime startTime, LocalDateTime endTime);
 //    List<Booking> findByStatus(BookingStatus status);
 }
