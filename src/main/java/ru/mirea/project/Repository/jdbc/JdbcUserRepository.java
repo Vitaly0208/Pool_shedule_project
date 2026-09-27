@@ -2,7 +2,7 @@ package ru.mirea.project.Repository.jdbc;
 
 import ru.mirea.project.Domain.Enums.SubscriptionType;
 import ru.mirea.project.Domain.Models.User;
-import ru.mirea.project.Repository.DatabaseException;
+import ru.mirea.project.Repository.Exeptions.DatabaseException;
 import ru.mirea.project.Repository.api.UserRepository;
 
 import java.sql.Connection;

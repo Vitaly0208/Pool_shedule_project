@@ -1,4 +1,4 @@
-package ru.mirea.project.Application.Service;
+package ru.mirea.project.Application.Services;
 
 public interface PasswordHasher {
 

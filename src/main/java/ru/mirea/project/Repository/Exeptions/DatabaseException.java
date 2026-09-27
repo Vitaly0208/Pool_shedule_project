@@ -1,4 +1,4 @@
-package ru.mirea.project.Repository;
+package ru.mirea.project.Repository.Exeptions;
 
 public class DatabaseException extends RuntimeException {
 

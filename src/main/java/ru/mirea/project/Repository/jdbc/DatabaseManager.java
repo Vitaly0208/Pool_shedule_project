@@ -1,6 +1,6 @@
 package ru.mirea.project.Repository.jdbc;
 
-import ru.mirea.project.Repository.DatabaseException;
+import ru.mirea.project.Repository.Exeptions.DatabaseException;
 
 import java.io.IOException;
 import java.io.InputStream;

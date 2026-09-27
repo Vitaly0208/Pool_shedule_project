@@ -2,9 +2,8 @@ package ru.mirea.project.Repository.jdbc;
 
 import ru.mirea.project.Domain.Enums.BookingStatus;
 import ru.mirea.project.Domain.Enums.SessionType;
-import ru.mirea.project.Domain.Enums.SubscriptionType;
 import ru.mirea.project.Domain.Models.Booking;
-import ru.mirea.project.Repository.DatabaseException;
+import ru.mirea.project.Repository.Exeptions.DatabaseException;
 import ru.mirea.project.Repository.api.BookingRepository;
 
 import java.sql.Connection;
